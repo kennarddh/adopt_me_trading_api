@@ -67,6 +67,7 @@ class Data:
                     item_data = {
                         'id': int(split_item_data[0]),
                         'name': item.attrs['id'],
+                        'is_pet': False,
                         'value': int(split_item_data[1]),
                         'value_neon': 0,
                         'value_mega_neon': 0
@@ -75,6 +76,7 @@ class Data:
                     item_data = {
                         'id': int(split_item_data[0]),
                         'name': item.attrs['id'],
+                        'is_pet': True,
                         'value': int(split_item_data[1]),
                         'value_neon': int(split_item_data[2]),
                         'value_mega_neon': int(split_item_data[3])
@@ -133,3 +135,8 @@ class Data:
 
     def get_image(self, item_id):
         return '{}{}.png'.format(self.image_url, item_id)
+
+if __name__ == '__main__':
+    data = Data()
+
+    data.update()
