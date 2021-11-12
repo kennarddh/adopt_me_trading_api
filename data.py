@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 
 
-class UpdateData:
+class Data:
     def __init__(self, download_image = True):
         self.request_url = 'https://adoptmetradingvalues.com/'
         self.image_url = 'https://adoptmetradingvalues.com/images/'
@@ -90,3 +90,6 @@ class UpdateData:
     def load(self):
         with open('data.json', 'r') as file:
             return json.load(file)
+
+    def get_image(self, item_id):
+        return '{}{}.png'.format(self.image_url, item_id)
