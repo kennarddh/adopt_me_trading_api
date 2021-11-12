@@ -91,5 +91,45 @@ class Data:
         with open('data.json', 'r') as file:
             return json.load(file)
 
+    def get_all_items(self):
+        with open('data.json', 'r') as file:
+            all_category = json.load(file)['category']
+
+        all_items = {}
+
+        for category, value in all_category.items():
+            for item_name, item_data in value['items'].items():
+                all_items[item_name] = item_data
+
+        return all_items
+
+    def get_item_by_id(self, item_id):
+        with open('data.json', 'r') as file:
+            all_category = json.load(file)['category']
+
+        item = {}
+
+        for category, value in all_category.items():
+            for item_name, item_data in value['items'].items():
+                if item_data['id'] == int(item_id):
+                    item[item_name] = item_data
+
+        return item
+
+    def search_item_by_name(self, item_name):
+        items = {}
+
+        for category, value in self.load()['category'].items():
+            items[category] = {}
+
+            for item_name_loop, item_data in value['items'].items():
+                if item_name.lower() in item_data['name'].lower() or item_name.lower() in item_name_loop.lower():
+                    items[category][item_name_loop] = item_data
+
+            if items[category] == {}:
+                del items[category]
+
+        return items
+
     def get_image(self, item_id):
         return '{}{}.png'.format(self.image_url, item_id)

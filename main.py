@@ -23,6 +23,7 @@ def invalid_route(error):
 def category():
     data = Data()
     load_data = data.load()
+
     if 'query' not in request.args:
         return Response(
             json.dumps({
@@ -46,12 +47,114 @@ def category():
             return Response(
                 json.dumps({
                     'message' : 'category not found',
-                    'error_code' : 404,
+                    'error_code' : 400,
                     'status': False,
                     'data': ''
                 }
-            ), status=404, mimetype="application/json")
+            ), status=400, mimetype="application/json")
     
+@app.route('/item/', methods=['GET'])
+def item():
+    data = Data()
+    all_items = data.get_all_items()
+
+    if 'query' not in request.args:
+        return Response(
+            json.dumps({
+                'message' : 'all items',
+                'error_code' : 200,
+                'status': True,
+                'data': all_items
+            }
+        ), status=200, mimetype="application/json")
+    else:
+        if request.args['query'] in all_items.keys():
+            return Response(
+                json.dumps({
+                    'message' : 'item',
+                    'error_code' : 200,
+                    'status': True,
+                    'data': all_items[request.args['query']]
+                }
+            ), status=200, mimetype="application/json")
+        else:
+            return Response(
+                json.dumps({
+                    'message' : 'item not found',
+                    'error_code' : 400,
+                    'status': False,
+                    'data': ''
+                }
+            ), status=400, mimetype="application/json")
+
+@app.route('/item/id/', methods=['GET'])
+def item_id():
+    data = Data()
+    all_items = data.get_all_items()
+
+    if 'query' not in request.args:
+        return Response(
+            json.dumps({
+                'message' : 'all items',
+                'error_code' : 200,
+                'status': True,
+                'data': all_items
+            }
+        ), status=200, mimetype="application/json")
+    else:
+        if request.args['query'] in [str(i['id']) for i in all_items.values()]:
+            return Response(
+                json.dumps({
+                    'message' : 'item',
+                    'error_code' : 200,
+                    'status': True,
+                    'data': data.get_item_by_id(request.args['query'])
+                }
+            ), status=200, mimetype="application/json")
+        else:
+            return Response(
+                json.dumps({
+                    'message' : 'item not found',
+                    'error_code' : 400,
+                    'status': False,
+                    'data': ''
+                }
+            ), status=400, mimetype="application/json")
+
+@app.route('/item/search/', methods=['GET'])
+def item_search():
+    data = Data()
+    all_items = data.get_all_items()
+
+    if 'query' not in request.args:
+        return Response(
+            json.dumps({
+                'message' : 'all items',
+                'error_code' : 200,
+                'status': True,
+                'data': all_items
+            }
+        ), status=200, mimetype="application/json")
+    else:
+        data_search = data.search_item_by_name(request.args['query'])
+        if data_search != {}:
+            return Response(
+                json.dumps({
+                    'message' : 'item',
+                    'error_code' : 200,
+                    'status': True,
+                    'data': data_search
+                }
+            ), status=200, mimetype="application/json")
+        else:
+            return Response(
+                json.dumps({
+                    'message' : 'item not found',
+                    'error_code' : 400,
+                    'status': False,
+                    'data': ''
+                }
+            ), status=400, mimetype="application/json")
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8080, threaded=True, use_reloader=False)
