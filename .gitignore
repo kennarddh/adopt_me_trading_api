@@ -138,4 +138,4 @@ dmypy.json
 cython_debug/
 
 images/
-data.json
+/data.json
