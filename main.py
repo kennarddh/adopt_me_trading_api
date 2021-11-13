@@ -9,6 +9,7 @@ from flask import *
 
 load_dotenv()
 API_KEY = os.environ['API_KEY']
+PORT = os.environ['PORT']
 
 app = Flask(__name__)
 
@@ -247,5 +248,8 @@ def item_category():
                 }
             ), status=200, mimetype="application/json")
 
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=8080, threaded=True, use_reloader=False)
+def run():
+    app.run(debug=True, host='0.0.0.0', port=int(PORT), threaded=True, use_reloader=False)
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=int(PORT), threaded=True, use_reloader=False)
