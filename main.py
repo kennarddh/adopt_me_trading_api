@@ -1,6 +1,7 @@
 import json
 import os
 from dotenv import load_dotenv
+from threading import Thread
 
 from data import Data
 
@@ -41,7 +42,11 @@ def data_update():
         ), status=200, mimetype="application/json")
     else:
         if request.form['api_key'] == API_KEY:
-            data.update()
+            def _update(data):
+                data.update()
+
+            thread = Thread(target=_update, kwargs={'data': data})
+            thread.start()
         
             return Response(
                 json.dumps({
@@ -95,7 +100,7 @@ def category():
                 }
             ), status=200, mimetype="application/json")
 
-@app.route('/item/name', methods=['GET'])
+@app.route('/item/', methods=['GET'])
 def item():
     data = Data()
     all_items = data.get_all_items()
