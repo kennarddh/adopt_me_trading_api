@@ -118,6 +118,17 @@ class Data:
 
         return item
 
+    def get_items_by_category(self, category_name):
+        with open('data.json', 'r') as file:
+            all_category = json.load(file)['category']
+
+        items = {}
+
+        if category_name in all_category.keys():
+            items[category_name] = all_category[category_name]
+
+        return items
+
     def search_item_by_name(self, item_name):
         items = {}
 

@@ -1,9 +1,14 @@
 import json
+import os
+from dotenv import load_dotenv
 
 from data import Data
 
 from flask import *
 
+
+load_dotenv()
+API_KEY = os.environ['API_KEY']
 
 app = Flask(__name__)
 
@@ -19,6 +24,42 @@ def invalid_route(error):
         }
     ), status=404, mimetype="application/json")
 
+@app.route('/data/update/', methods=['POST'])
+@app.route('/data/update', methods=['POST'])
+def data_update():
+    data = Data()
+
+    if 'api_key' not in request.form:
+        return Response(
+            json.dumps({
+                'message' : 'no api_key form data',
+                'error_code' : 400,
+                'status': False,
+                'data': ''
+            }
+        ), status=200, mimetype="application/json")
+    else:
+        if request.form['api_key'] == API_KEY:
+            data.update()
+        
+            return Response(
+                json.dumps({
+                    'message' : 'data successfully updated',
+                    'error_code' : 200,
+                    'status': False,
+                    'data': ''
+                }
+            ), status=200, mimetype="application/json")
+        else:
+            return Response(
+                json.dumps({
+                    'message' : 'wrong api_key',
+                    'error_code' : 401,
+                    'status': False,
+                    'data': ''
+                }
+            ), status=200, mimetype="application/json")
+
 @app.route('/category/', methods=['GET'])
 def category():
     data = Data()
@@ -27,10 +68,10 @@ def category():
     if 'query' not in request.args:
         return Response(
             json.dumps({
-                'message' : 'all category',
-                'error_code' : 200,
-                'status': True,
-                'data': load_data['category']
+                'message' : 'no query parameter',
+                'error_code' : 400,
+                'status': False,
+                'data': ''
             }
         ), status=200, mimetype="application/json")
     else:
@@ -51,20 +92,35 @@ def category():
                     'status': False,
                     'data': ''
                 }
-            ), status=400, mimetype="application/json")
-    
-@app.route('/item/', methods=['GET'])
+            ), status=200, mimetype="application/json")
+
+@app.route('/item/name', methods=['GET'])
 def item():
+    data = Data()
+    all_items = data.get_all_items()
+
+    if request.args['query'] in all_items.keys():
+        return Response(
+            json.dumps({
+                'message' : 'all item',
+                'error_code' : 200,
+                'status': True,
+                'data': all_items
+            }
+        ), status=200, mimetype="application/json")
+
+@app.route('/item/name/', methods=['GET'])
+def item_name():
     data = Data()
     all_items = data.get_all_items()
 
     if 'query' not in request.args:
         return Response(
             json.dumps({
-                'message' : 'all items',
-                'error_code' : 200,
-                'status': True,
-                'data': all_items
+                'message' : 'no query parameter',
+                'error_code' : 400,
+                'status': False,
+                'data': ''
             }
         ), status=200, mimetype="application/json")
     else:
@@ -85,7 +141,7 @@ def item():
                     'status': False,
                     'data': ''
                 }
-            ), status=400, mimetype="application/json")
+            ), status=200, mimetype="application/json")
 
 @app.route('/item/id/', methods=['GET'])
 def item_id():
@@ -95,10 +151,10 @@ def item_id():
     if 'query' not in request.args:
         return Response(
             json.dumps({
-                'message' : 'all items',
-                'error_code' : 200,
-                'status': True,
-                'data': all_items
+                'message' : 'no query parameter',
+                'error_code' : 400,
+                'status': False,
+                'data': ''
             }
         ), status=200, mimetype="application/json")
     else:
@@ -119,7 +175,7 @@ def item_id():
                     'status': False,
                     'data': ''
                 }
-            ), status=400, mimetype="application/json")
+            ), status=200, mimetype="application/json")
 
 @app.route('/item/search/', methods=['GET'])
 def item_search():
@@ -129,10 +185,10 @@ def item_search():
     if 'query' not in request.args:
         return Response(
             json.dumps({
-                'message' : 'all items',
-                'error_code' : 200,
-                'status': True,
-                'data': all_items
+                'message' : 'no query parameter',
+                'error_code' : 400,
+                'status': False,
+                'data': ''
             }
         ), status=200, mimetype="application/json")
     else:
@@ -154,7 +210,42 @@ def item_search():
                     'status': False,
                     'data': ''
                 }
-            ), status=400, mimetype="application/json")
+            ), status=200, mimetype="application/json")
+
+@app.route('/item/category/', methods=['GET'])
+def item_category():
+    data = Data()
+    load = data.load()
+
+    if 'query' not in request.args:
+        return Response(
+            json.dumps({
+                'message' : 'no query parameter',
+                'error_code' : 400,
+                'status': False,
+                'data': ''
+            }
+        ), status=200, mimetype="application/json")
+    else:
+        data_category = data.get_items_by_category(request.args['query'])
+        if data_category != {}:
+            return Response(
+                json.dumps({
+                    'message' : 'category',
+                    'error_code' : 200,
+                    'status': True,
+                    'data': data_category
+                }
+            ), status=200, mimetype="application/json")
+        else:
+            return Response(
+                json.dumps({
+                    'message' : 'category not found',
+                    'error_code' : 400,
+                    'status': False,
+                    'data': ''
+                }
+            ), status=200, mimetype="application/json")
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=8080, threaded=True, use_reloader=False)
