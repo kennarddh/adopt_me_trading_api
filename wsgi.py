@@ -1,4 +1,3 @@
-import main
- 
-if __name__ == "__main__":
-    main.app.run()
+from main import app as application
+
+app = application
