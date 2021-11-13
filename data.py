@@ -38,6 +38,7 @@ class Data:
 
         data['category'] = {}
 
+        self.ensure_dir('images/')
 
         for group in result:
             group_name = item_type_list[group.attrs['id']]
@@ -88,6 +89,10 @@ class Data:
             json.dump(data, file, indent=4)
 
         return data
+
+    def ensure_dir(self, directory):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
     def load(self):
         with open('data.json', 'r') as file:
