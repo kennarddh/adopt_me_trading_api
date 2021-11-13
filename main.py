@@ -105,15 +105,14 @@ def item():
     data = Data()
     all_items = data.get_all_items()
 
-    if request.args['query'] in all_items.keys():
-        return Response(
-            json.dumps({
-                'message' : 'all item',
-                'error_code' : 200,
-                'status': True,
-                'data': all_items
-            }
-        ), status=200, mimetype="application/json")
+    return Response(
+        json.dumps({
+            'message' : 'all item',
+            'error_code' : 200,
+            'status': True,
+            'data': all_items
+        }
+    ), status=200, mimetype="application/json")
 
 @app.route('/item/name/', methods=['GET'])
 def item_name():
