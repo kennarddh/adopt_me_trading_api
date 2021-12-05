@@ -98,6 +98,12 @@ class Data:
         with open('data.json', 'r') as file:
             return json.load(file)
 
+    def get_raw(self):
+        with open('data.json', 'r') as file:
+            raw = json.load(file)
+
+        return raw
+
     def get_all_items(self):
         with open('data.json', 'r') as file:
             all_category = json.load(file)['category']

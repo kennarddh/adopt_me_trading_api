@@ -7,15 +7,12 @@ from data import Data
 
 from flask import *
 
-
 load_dotenv()
-API_KEY = os.environ['API_KEY']
 PORT = os.environ['PORT']
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
-
-@app.errorhandler(404) 
+@app.errorhandler(404)
 def invalid_route(error): 
     return Response(
         json.dumps({
@@ -26,45 +23,36 @@ def invalid_route(error):
         }
     ), status=404, mimetype="application/json")
 
+@app.errorhandler(405)
+def method_not_allowed(error): 
+    return Response(
+        json.dumps({
+            'message' : 'method not allowed',
+            'error_code' : 405,
+            'status': False,
+            'data': ''
+        }
+    ), status=405, mimetype="application/json")
+
 @app.route('/data/update/', methods=['POST'])
 @app.route('/data/update', methods=['POST'])
 def data_update():
     data = Data()
 
-    if 'api_key' not in request.form:
-        return Response(
-            json.dumps({
-                'message' : 'no api_key form data',
-                'error_code' : 400,
-                'status': False,
-                'data': ''
-            }
-        ), status=200, mimetype="application/json")
-    else:
-        if request.form['api_key'] == API_KEY:
-            def _update(data):
-                data.update()
+    def _update(data):
+        data.update()
 
-            thread = Thread(target=_update, kwargs={'data': data})
-            thread.start()
-        
-            return Response(
-                json.dumps({
-                    'message' : 'data successfully updated',
-                    'error_code' : 200,
-                    'status': False,
-                    'data': ''
-                }
-            ), status=200, mimetype="application/json")
-        else:
-            return Response(
-                json.dumps({
-                    'message' : 'wrong api_key',
-                    'error_code' : 401,
-                    'status': False,
-                    'data': ''
-                }
-            ), status=200, mimetype="application/json")
+    thread = Thread(target=_update, kwargs={'data': data})
+    thread.start()
+
+    return Response(
+        json.dumps({
+            'message' : 'data successfully updated',
+            'error_code' : 200,
+            'status': False,
+            'data': ''
+        }
+    ), status=200, mimetype="application/json")
 
 @app.route('/category/', methods=['GET'])
 def category():
@@ -111,6 +99,20 @@ def item():
             'error_code' : 200,
             'status': True,
             'data': all_items
+        }
+    ), status=200, mimetype="application/json")
+
+@app.route('/item/raw', methods=['GET'])
+def item_raw():
+    data = Data()
+    raw = data.get_raw()
+
+    return Response(
+        json.dumps({
+            'message' : 'raw',
+            'error_code' : 200,
+            'status': True,
+            'data': raw
         }
     ), status=200, mimetype="application/json")
 
