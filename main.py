@@ -7,7 +7,9 @@ from data import Data
 
 from flask import *
 
-load_dotenv()
+project_folder = os.path.expanduser('~/adopt_me_trading_api')  # adjust as appropriate
+load_dotenv(os.path.join(project_folder, '.env'))
+
 PORT = os.environ['PORT']
 
 app = Flask(__name__, static_url_path='/static')
