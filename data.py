@@ -38,7 +38,7 @@ class Data:
 
         data['category'] = {}
 
-        self.ensure_dir('images/')
+        self.ensure_dir('static/images/')
 
         for group in result:
             group_name = item_type_list[group.attrs['id']]
@@ -54,11 +54,11 @@ class Data:
                 split_item_data = [i.strip() for i in onclick.split('(')[1].split(')')[0].split(',')]
 
                 if self.download_image:
-                    if not os.path.exists('images/{}.png'.format(split_item_data[0])):
+                    if not os.path.exists('static/images/{}.png'.format(split_item_data[0])):
                         image = requests.get('{}{}.png'.format(self.image_url, int(split_item_data[0])), stream=True)
 
                         if image.status_code == 200:
-                            with open('images/{}.png'.format(split_item_data[0]), 'wb') as file:
+                            with open('static/images/{}.png'.format(split_item_data[0]), 'wb') as file:
                                 for chunk in image:
                                     file.write(chunk)
                         else:
