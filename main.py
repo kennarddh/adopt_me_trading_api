@@ -255,6 +255,11 @@ def item_category():
                 }
             ), status=200, mimetype="application/json")
 
+@app.after_request
+def add_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
 def run():
     app.run(debug=True, host='0.0.0.0', port=int(PORT), threaded=True, use_reloader=False)
 
